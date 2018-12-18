@@ -28,21 +28,21 @@ class db {
 
     function connect() {
 
-        $this -> link = new mysqli($this->host, $this->user, $this->pass, $this->database);
+        try {
 
-        if ($this -> link -> connect_errno) {
+            $this -> link = new PDO("mysql:host={$this->host};dbname={$this->database}", $this->user, $this->pass, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
             
-            logErrorInFile($this -> link -> connect_errno . ' -> ' . $this -> link -> connect_error);
+            // set the PDO error mode to exception
+            $this -> link -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        }
+        catch(Exception $e) {
+
+            logErrorInFile($e -> getMessage());
 
             $this -> registerError(1100);
 
-            return null;
-
         }
-        
-        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-        $this -> link -> set_charset("utf8");
         
         return $this -> link;
             
@@ -59,31 +59,24 @@ class db {
                 # create a prepared statement
                 $stmt = $this -> link -> prepare($query);
 
-                if ($params != null)
-                {
-                    // Generate the Type String (eg: 'issisd')
-                    $types = $this -> types($params);
-            
-                    // Add the Type String as the first Param
-                    $bind_names[] = $types;
-            
-                    // Loop through the given Params
-                    for ($i=0; $i<count($params);$i++)
-                    {
-                        // Create a variable Name
-                        $bind_name = 'bind' . $i;
-                        // Add the Parameter to the variable Variable
-                        $$bind_name = $params[$i];
-                        // Associate the Variable as an Element in the Array
-                        $bind_names[] = &$$bind_name;
-                    }
+                /*
+                $named = strpos($query, ':') !== false;
 
-                    // Call the Function bind_param with dynamic Parameters
-                    call_user_func_array(array($stmt,'bind_param'), $bind_names);
+                foreach ($params as $key => $value) {
+
+                    if($named)
+                        $key ++;
+
+                    $stmt -> bindParam($key, $value);
+
                 }
+                */
 
                 # execute query 
-                $stmt -> execute();
+                if($params)
+                    $stmt -> execute($params);
+                else
+                    $stmt -> execute();
 
             }            
 
@@ -125,12 +118,12 @@ class db {
     function value($sql, $params = null) {
 
         $stmt = $this -> query($sql, $params);
-
-        $result = $stmt -> get_result();
         
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_row();
+        if ($stmt -> rowCount() > 0) {
+
+            $row = $stmt -> fetch(3); //PDO::FETCH_NUM
             return $row[0];
+
         }
         return '';
 
@@ -140,11 +133,11 @@ class db {
 
         $stmt = $this -> query($sql, $params);
 
-        $result = $stmt -> get_result();
+        if ($stmt -> rowCount() > 0) {
 
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
+            $row = $stmt -> fetch(2);
             return $row;
+
         }
         return '';
 
@@ -155,11 +148,8 @@ class db {
         $arr = array();
         $stmt = $this -> query($sql, $params);
 
-        $result = $stmt -> get_result();
-
-        if ($result -> num_rows > 0)
-            while($row = $result -> fetch_assoc())
-                $arr[] = $row;
+        if ($stmt -> rowCount() > 0)
+            $arr = $stmt -> fetchAll(2);
         
         return $arr;
 
@@ -190,7 +180,10 @@ class db {
         
             $stmt1 = $this -> link -> prepare($insert);
 
-            $params = implode('; ', $params);
+            if($params)
+                $params = implode('; ', $params);
+            else
+                $params = '';
             
             $message = $e -> getMessage();
             $code = $e -> getCode();
@@ -198,9 +191,7 @@ class db {
             $line = $e -> getLine();
             $trace = $e -> getTraceAsString();
 
-            $stmt1 -> bind_param("sssssiss", $query, $params, $message, $code, $file, $line, $trace, $comment);
-
-            $stmt1 -> execute();
+            $stmt1 -> execute(array($query, $params, $message, $code, $file, $line, $trace, $comment));
 
         }
         catch (Exception $ex) {
@@ -213,9 +204,9 @@ class db {
 
     function createErrorsTable() {
 
-        $exists_query ="SELECT COUNT(table_name) 
+        $exists_query ="SELECT COUNT(table_name)
                         FROM information_schema.tables 
-                        WHERE table_schema = '" . $this->database . "' 
+                        WHERE table_schema = '" . $this -> database . "' 
                             AND table_name = 'errors'";
 
         if($this -> value($exists_query) == 0) {
