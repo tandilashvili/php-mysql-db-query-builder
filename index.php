@@ -2,7 +2,8 @@
 // Init libraries, classes
 include 'init.php';
 
-p($db -> select('name') -> from('system_variable') -> orderBy('id') -> select('value') -> orderBy('value', 2) -> orderBy('name', 1) -> get());
+pe($db -> select('name') -> from('system_variable') -> orderBy('id') -> select('value') -> orderBy('value', 2) -> orderBy('name', 1) -> limit(2, 4) -> get());
+
 
 p($db -> value(GET_VARIABLE_VALUE, array('id' => 3)));
 

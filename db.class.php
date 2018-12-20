@@ -52,6 +52,27 @@ class db {
 
     }
 
+    function limit() {
+
+        $skip = $take = 0;
+        
+        // Get number of params
+        $num_args = func_num_args();
+
+        if($num_args == 1) {
+            $take = func_get_arg(0);
+        }
+        else if($num_args == 2) {
+            $skip = func_get_arg(0);
+            $take = func_get_arg(1);
+        }
+
+        $this -> query['limit'] = "LIMIT $skip, $take";
+
+        return $this;
+
+    }
+
     function get() {
         p($this -> getQuery());
         if(!count($this -> query['fields']))
