@@ -2,6 +2,8 @@
 // Init libraries, classes
 include 'init.php';
 
+p($db -> from('system_variable') -> sum('id'));
+
 pe(	$db 
 	-> select('name') 
 	-> from('system_variable') 

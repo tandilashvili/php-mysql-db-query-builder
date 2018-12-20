@@ -29,11 +29,53 @@ class db {
 
     }
 
+    function count() {
+
+        return $this -> aggregate('COUNT(*)');
+
+    }
+
+    function min($field) {
+
+        return $this -> aggregate("MIN({$field})");
+
+    }
+
+    function max($field) {
+
+        return $this -> aggregate("MAX({$field})");
+
+    }
+
+    function avg($field) {
+
+        return $this -> aggregate("AVG({$field})");
+
+    }
+
+    function sum($field) {
+
+        return $this -> aggregate("SUM({$field})");
+
+    }
+
+    function aggregate($aggregate) {
+
+        return $this -> value($this -> select($aggregate) -> getQuery());
+
+    }
+
     function from($from) {
 
         $this -> query['table'] .= $from;
 
         return $this;
+
+    }
+
+    function table($table) {
+
+        return $this -> from($table);
 
     }
 
@@ -55,7 +97,7 @@ class db {
     function limit() {
 
         $skip = $take = 0;
-        
+            
         // Get number of params
         $num_args = func_num_args();
 
@@ -122,6 +164,8 @@ class db {
 
         }
         
+        $this -> resetQuery();
+
         return $str;
 
     }
