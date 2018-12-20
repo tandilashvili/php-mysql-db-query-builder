@@ -73,6 +73,12 @@ class db {
 
     }
 
+    function first() {
+        
+        return $this -> limit(0, 1) -> get();
+
+    }
+
     function get() {
         p($this -> getQuery());
         if(!count($this -> query['fields']))
