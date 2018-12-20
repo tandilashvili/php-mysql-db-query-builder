@@ -2,10 +2,15 @@
 // Init libraries, classes
 include 'init.php';
 
+p($db -> select('name') -> from('system_variable') -> orderBy('id') -> select('value') -> orderBy('value', 2) -> orderBy('name', 1) -> get());
+
 p($db -> value(GET_VARIABLE_VALUE, array('id' => 3)));
 
 
 p($db -> row(GET_VARIABLE, array(3)));
+
+
+p($db -> all('errors'));
 
 
 p($db -> rows(GET_VARIABLES, array(3)));
@@ -15,8 +20,8 @@ p($db -> query(DELETE_VARIABLE, array(58)));
 
 
 p($db -> query(INSERT_VARIABLE, array(
-	'value' => 'ის 1', 
-	'name' => 'ნო 2'
+	'value' => 'ის 5', 
+	'name' => 'ნო 55'
 )));
 
 

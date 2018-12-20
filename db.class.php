@@ -11,7 +11,108 @@ class db {
     var $status_code = 1; //database status code
     var $status_text = "OK"; //database status text
 
+    var $query = array();
+
     public $link;
+
+    function all($table) {
+
+        return $this -> from($table) -> get();
+
+    }
+
+    function select($field) {
+
+        array_push($this -> query['fields'], $field);
+
+        return $this;
+
+    }
+
+    function from($from) {
+
+        $this -> query['table'] .= $from;
+
+        return $this;
+
+    }
+
+    function orderBy($order_by, $order=1) {
+
+        $order_str = $order == 1 ? 'ASC' : 'DESC';
+
+        $order_by .= ' ' . $order_str;
+
+        if(empty($this -> query['order_by']))
+            $this -> query['order_by'] = 'ORDER BY ' . $order_by;
+        else
+            $this -> query['order_by'] .= ', ' . $order_by;
+
+        return $this;
+
+    }
+
+    function get() {
+        p($this -> getQuery());
+        if(!count($this -> query['fields']))
+            array_push($this -> query['fields'], '*');
+
+        $result = $this -> rows($this -> getQuery());
+        
+        $this -> resetQuery();
+
+        return $result;
+
+    }
+
+    function getQuery() {
+
+        return $this -> concatQuery();
+
+    }
+
+    function concatQuery() {
+        
+        $str = '';
+        foreach($this -> query as $item) {
+
+            if(is_array($item)) {
+
+                $count = count($item);
+
+                if($count == 1)
+                    $str_item = $item[0];
+                else if($count > 1)
+                    $str_item = implode(', ', $item);
+                else 
+                    $str_item = '';
+
+            }                
+            else
+                $str_item = $item;
+            
+            $str .= ' ' . $str_item;
+
+        }
+        
+        return $str;
+
+    }
+
+    function resetQuery() {
+        
+        $this -> query = array(
+
+            'action' => 'SELECT',
+            'fields' => array(),
+            'table' => 'FROM ',
+            'where' => '',
+            'order_by' => '',
+            'limit' => '',
+    
+        );
+
+    }
 
     function __construct ($host, $user, $pass, $database) {
 
@@ -22,7 +123,9 @@ class db {
         
         $this -> connect();
 
-        $this -> createErrorsTable();
+        // $this -> createErrorsTable();
+
+        $this -> resetQuery();
 
     }
 
@@ -59,19 +162,6 @@ class db {
                 # create a prepared statement
                 $stmt = $this -> link -> prepare($query);
 
-                /*
-                $named = strpos($query, ':') !== false;
-
-                foreach ($params as $key => $value) {
-
-                    if($named)
-                        $key ++;
-
-                    $stmt -> bindParam($key, $value);
-
-                }
-                */
-
                 # execute query 
                 if($params)
                     $stmt -> execute($params);
@@ -90,29 +180,6 @@ class db {
         }
         
         return $stmt;
-    }
-
-    function types($params) {
-
-        $types = '';
-        foreach($params as $param)
-        {
-            if(is_int($param)) {
-                // Integer
-                $types .= 'i';
-            } elseif (is_float($param)) {
-                // Double
-                $types .= 'd';
-            } elseif (is_string($param)) {
-                // String
-                $types .= 's';
-            } else {
-                // Blob and Unknown
-                $types .= 'b';
-            }
-        }
-        return $types;
-
     }
 
     function value($sql, $params = null) {
