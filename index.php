@@ -2,15 +2,19 @@
 // Init libraries, classes
 include 'init.php';
 
-p($db -> from('system_variable') -> sum('id'));
+p(	$db -> table('system_variable') -> sum('id'));
 
-pe(	$db 
-	-> select('name') 
-	-> from('system_variable') 
-	-> orderBy('id', 2) 
-	-> select('value') 
-	-> select('id') 
-	-> first());
+p(	$db -> select('name') 
+		-> from('system_variable') 
+		-> first());
+		
+pe(	$db -> select('id, name') 
+		-> from('system_variable') 
+		-> orderBy('name') 
+		-> orderBy('id', 2)
+		-> limit(2, 10)
+		-> select('value') 
+		-> get());
 
 
 p($db -> value(GET_VARIABLE_VALUE, array('id' => 3)));

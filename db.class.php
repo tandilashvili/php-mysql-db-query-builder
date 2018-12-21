@@ -11,6 +11,8 @@ class db {
     var $status_code = 1; //database status code
     var $status_text = "OK"; //database status text
 
+    // SQL Query Builder Variables
+    var $one_row = false;
     var $query = array();
 
     public $link;
@@ -61,7 +63,9 @@ class db {
 
     function aggregate($aggregate) {
 
-        return $this -> value($this -> select($aggregate) -> getQuery());
+        $query = $this -> select($aggregate) -> getQuery();
+        $this -> resetQuery();
+        return $this -> value($query);
 
     }
 
@@ -117,17 +121,21 @@ class db {
 
     function first() {
         
+        $this -> one_row = true;
         return $this -> limit(0, 1) -> get();
 
     }
 
     function get() {
-        p($this -> getQuery());
+        
         if(!count($this -> query['fields']))
             array_push($this -> query['fields'], '*');
-
-        $result = $this -> rows($this -> getQuery());
         
+        if($this -> one_row)
+            $result = $this -> row($this -> getQuery());
+        else
+            $result = $this -> rows($this -> getQuery());
+        p($this -> getQuery());
         $this -> resetQuery();
 
         return $result;
@@ -163,8 +171,6 @@ class db {
             $str .= ' ' . $str_item;
 
         }
-        
-        $this -> resetQuery();
 
         return $str;
 
@@ -172,6 +178,8 @@ class db {
 
     function resetQuery() {
         
+        $this -> one_row = false;
+
         $this -> query = array(
 
             'action' => 'SELECT',
