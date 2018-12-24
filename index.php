@@ -19,6 +19,8 @@ p(	$db -> table('system_variable')
 		-> insert(array('value' => '53', 'name' => '13'))
 	);
 
+p($db -> table('system_variable') -> where('id', '>', 119) -> delete());
+
 pe(	$db -> table('system_variable') 
 		-> where('name', '25')
 		-> where('id', '>', '113')

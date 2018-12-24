@@ -161,7 +161,7 @@ class db {
         
         //pe($this -> params);
         $result = $this -> query($this -> getQuery(), $this -> params);
-
+        
         return $result -> rowCount();
 
     }
@@ -172,6 +172,18 @@ class db {
             $key .= '1';
 
         return $key;
+
+    }
+
+    function delete() {
+
+        $this -> query['action'] = 'DELETE';
+        $this -> query['pre_table'] = 'FROM';
+
+        // pe($this -> getQuery());
+        $result = $this -> query($this -> getQuery(), $this -> params);
+
+        return $result -> rowCount();
 
     }
 
