@@ -23,7 +23,7 @@ p($db -> table('system_variable') -> where('id', '>', 119) -> delete());
 
 pe(	$db -> table('system_variable') 
 		-> where('name', '25')
-		-> where('id', '>', '113')
+		-> orWhere('id', '>', '113') 
 		-> update(array(
 			'value' => 'new-value - 54', 
 			'name' => '27'

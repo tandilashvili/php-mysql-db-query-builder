@@ -161,7 +161,7 @@ class db {
         
         //pe($this -> params);
         $result = $this -> query($this -> getQuery(), $this -> params);
-        
+
         return $result -> rowCount();
 
     }
@@ -212,6 +212,36 @@ class db {
         $where =  $key . ' ' . $comparison . ' ' . ":$key_unique";
 
         $this -> generateQueryPart('where', $where, 'WHERE', ' AND ');
+
+        return $this;
+
+    }
+
+    function orWhere() {
+
+        $comparison = '=';
+        $key = $value = '';
+
+        // Get number of params
+        $num_args = func_num_args();
+
+        if($num_args == 2) {
+            $key = func_get_arg(0);
+            $value = func_get_arg(1);
+        }
+        else if($num_args == 3) {
+            $key = func_get_arg(0);
+            $comparison = func_get_arg(1);
+            $value = func_get_arg(2);
+        }
+
+        // Add param to params array for prepared statement
+        $key_unique = $this -> getUniqueKey($key);
+        $this -> params[$key_unique] = $value;
+
+        $where =  $key . ' ' . $comparison . ' ' . ":$key_unique";
+
+        $this -> generateQueryPart('where', $where, 'WHERE', ' OR ');
 
         return $this;
 
