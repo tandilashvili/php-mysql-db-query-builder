@@ -187,6 +187,18 @@ class db {
 
     }
 
+    function truncate() {
+
+        $this -> query['action'] = 'TRUNCATE';
+        $this -> query['pre_table'] = 'TABLE';
+
+        // pe($this -> getQuery());
+        $result = $this -> query($this -> getQuery(), $this -> params);
+
+        return $result;
+
+    }
+
     function where() {
 
         $comparison = '=';
