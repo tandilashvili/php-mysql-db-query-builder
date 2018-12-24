@@ -47,10 +47,21 @@ class db {
 
     function select($field) {
 
-        if(empty($this -> query['fields']))
-            $this -> query['fields'] = $field;
+        $this -> generatQueryPart('fields', $field);
+
+        return $this;
+
+    }
+
+    private function generatQueryPart($field, $field_sql, $field_pre='', $field_sep=', ') {
+
+        if(!empty($field_pre))
+            $field_pre .= ' ';
+
+        if(empty($this -> query[$field]))
+            $this -> query[$field] = $field_pre . $field_sql;
         else
-            $this -> query['fields'] .= ', ' . $field;
+            $this -> query[$field] .= $field_sep . $field_sql;
 
         return $this;
 
@@ -119,10 +130,7 @@ class db {
             // Add param to params array for prepared statement
             $this -> params[$key] = $value;
             
-            if(empty($this -> query['set']))
-                $this -> query['set'] = 'SET ' . $set;
-            else
-                $this -> query['set'] .= ', ' . $set;
+            $this -> generatQueryPart('set', $set, 'SET');
             
         }
 
@@ -155,10 +163,7 @@ class db {
         // Add param to params array for prepared statement
         $this -> params[$key] = $value;
 
-        if(empty($this -> query['where']))
-            $this -> query['where'] = 'WHERE ' . $where;
-        else
-            $this -> query['where'] .= ' AND ' . $where;
+        $this -> generatQueryPart('where', $where, 'WHERE', ' AND ');
 
         return $this;
 
@@ -170,10 +175,7 @@ class db {
 
         $order_by .= ' ' . $order_str;
 
-        if(empty($this -> query['order_by']))
-            $this -> query['order_by'] = 'ORDER BY ' . $order_by;
-        else
-            $this -> query['order_by'] .= ', ' . $order_by;
+        $this -> generatQueryPart('order_by', $order_by, 'ORDER BY');
 
         return $this;
 
