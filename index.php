@@ -18,9 +18,14 @@ p(	$db -> select('id, name')
 		-> limit(2, 10)
 		-> get());
 
+p(	$db -> table('system_variable') 
+		-> insert(array('value' => '53', 'name' => '13'))
+	);
+
 pe(	$db -> table('system_variable') 
-		-> insert(array(
-			'value' => '53', 
+		-> where('name', 'ნო 31')
+		-> update(array(
+			'value' => 'ნო 31-new-value', 
 			'name' => '13'
 		)));
 
@@ -32,7 +37,8 @@ pe(	$db -> select('id, name')
 		-> orderBy('name') 
 		-> orderBy('id', 2)
 		-> limit(2, 10)
-		-> get());
+		-> get()
+	);
 
 
 p($db -> value(GET_VARIABLE_VALUE, array('id' => 3)));

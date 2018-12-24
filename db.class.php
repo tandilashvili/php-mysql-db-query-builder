@@ -47,13 +47,13 @@ class db {
 
     function select($field) {
 
-        $this -> generatQueryPart('fields', $field);
+        $this -> generateQueryPart('fields', $field);
 
         return $this;
 
     }
 
-    private function generatQueryPart($field, $field_sql, $field_pre='', $field_sep=', ') {
+    private function generateQueryPart($field, $field_sql, $field_pre='', $field_sep=', ') {
 
         if(!empty($field_pre))
             $field_pre .= ' ';
@@ -130,13 +130,36 @@ class db {
             // Add param to params array for prepared statement
             $this -> params[$key] = $value;
             
-            $this -> generatQueryPart('set', $set, 'SET');
+            $this -> generateQueryPart('set', $set, 'SET');
             
         }
 
         $result = $this -> query($this -> getQuery(), $this -> params);
 
         return $this -> link -> lastInsertId();
+
+    }
+
+    function update($params) {
+
+        $this -> query['action'] = 'UPDATE';
+        $this -> query['pre_table'] = '';
+
+        foreach($params as $key => $value) {
+
+            $set = $key  . ' = :' . $key;
+            
+            // Add param to params array for prepared statement
+            $this -> params[$key] = $value;
+            
+            $this -> generateQueryPart('set', $set, 'SET');
+            
+        }
+
+        // pe($this -> getQuery());
+        $result = $this -> query($this -> getQuery(), $this -> params);
+
+        return $result -> rowCount();
 
     }
 
@@ -163,7 +186,7 @@ class db {
         // Add param to params array for prepared statement
         $this -> params[$key] = $value;
 
-        $this -> generatQueryPart('where', $where, 'WHERE', ' AND ');
+        $this -> generateQueryPart('where', $where, 'WHERE', ' AND ');
 
         return $this;
 
@@ -175,7 +198,7 @@ class db {
 
         $order_by .= ' ' . $order_str;
 
-        $this -> generatQueryPart('order_by', $order_by, 'ORDER BY');
+        $this -> generateQueryPart('order_by', $order_by, 'ORDER BY');
 
         return $this;
 
