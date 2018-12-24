@@ -146,20 +146,32 @@ class db {
         $this -> query['pre_table'] = '';
 
         foreach($params as $key => $value) {
-
-            $set = $key  . ' = :' . $key;
             
             // Add param to params array for prepared statement
-            $this -> params[$key] = $value;
+            $key_unique = $this -> getUniqueKey($key);
+            $this -> params[$key_unique] = $value;
+
+            $set = $key  . ' = :' . $key_unique;
             
             $this -> generateQueryPart('set', $set, 'SET');
             
         }
 
-        // pe($this -> getQuery());
+        p($this -> getQuery());
+        
+        //pe($this -> params);
         $result = $this -> query($this -> getQuery(), $this -> params);
 
         return $result -> rowCount();
+
+    }
+
+    function getUniqueKey($key) {
+
+        while(array_key_exists($key, $this -> params))
+            $key .= '1';
+
+        return $key;
 
     }
 
@@ -181,10 +193,11 @@ class db {
             $value = func_get_arg(2);
         }
 
-        $where =  $key . ' ' . $comparison . ' ' . ":$key";
-
         // Add param to params array for prepared statement
-        $this -> params[$key] = $value;
+        $key_unique = $this -> getUniqueKey($key);
+        $this -> params[$key_unique] = $value;
+
+        $where =  $key . ' ' . $comparison . ' ' . ":$key_unique";
 
         $this -> generateQueryPart('where', $where, 'WHERE', ' AND ');
 
@@ -234,7 +247,7 @@ class db {
 
     function get() {
         p($this -> getQuery());
-        if(!count($this -> query['fields']))
+        if(empty($this -> query['fields']))
             array_push($this -> query['fields'], '*');
         
         if($this -> one_row)

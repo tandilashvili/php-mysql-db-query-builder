@@ -4,18 +4,15 @@ include 'init.php';
 
 p(	$db -> table('system_variable') -> sum('id'));
 
-p(	$db -> select('name') 
-		-> from('system_variable') 
-		-> first());
+p(	$db -> select('name') -> from('system_variable') -> first());
 		
 p(	$db -> select('id, name') 
 		-> select('value') 
-		-> from('system_variable') 
-		-> where('name', 'ნო 31')
+		-> from('system_variable')
 		-> where('id', '<', '50')
 		-> orderBy('name') 
 		-> orderBy('id', 2)
-		-> limit(2, 10)
+		-> limit(5, 5)
 		-> get());
 
 p(	$db -> table('system_variable') 
@@ -23,10 +20,11 @@ p(	$db -> table('system_variable')
 	);
 
 pe(	$db -> table('system_variable') 
-		-> where('name', 'ნო 31')
+		-> where('name', '25')
+		-> where('id', '>', '113')
 		-> update(array(
-			'value' => 'ნო 31-new-value', 
-			'name' => '13'
+			'value' => 'new-value - 54', 
+			'name' => '27'
 		)));
 
 pe(	$db -> select('id, name') 
