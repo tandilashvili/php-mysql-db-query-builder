@@ -9,11 +9,13 @@ p(	$db -> select('name')
 		-> first());
 		
 pe(	$db -> select('id, name') 
+		-> select('value') 
 		-> from('system_variable') 
+		-> where('name', 'ნო 31')
+		-> where('id', '<', '50')
 		-> orderBy('name') 
 		-> orderBy('id', 2)
 		-> limit(2, 10)
-		-> select('value') 
 		-> get());
 
 

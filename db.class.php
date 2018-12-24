@@ -14,8 +14,28 @@ class db {
     // SQL Query Builder Variables
     var $one_row = false;
     var $query = array();
+    var $params = array();
 
     public $link;
+
+    function resetQuery() {
+        
+        $this -> one_row = false;
+
+        $this -> params = array();
+
+        $this -> query = array(
+
+            'action' => 'SELECT',
+            'fields' => '',
+            'table' => 'FROM ',
+            'where' => '',
+            'order_by' => '',
+            'limit' => '',
+    
+        );
+
+    }
 
     function all($table) {
 
@@ -25,7 +45,10 @@ class db {
 
     function select($field) {
 
-        array_push($this -> query['fields'], $field);
+        if(empty($this -> query['fields']))
+            $this -> query['fields'] = $field;
+        else
+            $this -> query['fields'] .= ', ' . $field;
 
         return $this;
 
@@ -83,6 +106,38 @@ class db {
 
     }
 
+    function where() {
+
+        $comparison = '=';
+        $key = $value = '';
+
+        // Get number of params
+        $num_args = func_num_args();
+
+        if($num_args == 2) {
+            $key = func_get_arg(0);
+            $value = func_get_arg(1);
+        }
+        else if($num_args == 3) {
+            $key = func_get_arg(0);
+            $comparison = func_get_arg(1);
+            $value = func_get_arg(2);
+        }
+
+        $where =  $key . ' ' . $comparison . ' ' . ":$key";
+
+        // Add param to params array for prepared statement
+        $this -> params[$key] = $value;
+
+        if(empty($this -> query['where']))
+            $this -> query['where'] = 'WHERE ' . $where;
+        else
+            $this -> query['where'] .= ' AND ' . $where;
+
+        return $this;
+
+    }
+
     function orderBy($order_by, $order=1) {
 
         $order_str = $order == 1 ? 'ASC' : 'DESC';
@@ -132,9 +187,11 @@ class db {
             array_push($this -> query['fields'], '*');
         
         if($this -> one_row)
-            $result = $this -> row($this -> getQuery());
+            $result = $this -> row($this -> getQuery(), $this -> params);
         else
-            $result = $this -> rows($this -> getQuery());
+            $result = $this -> rows($this -> getQuery(), $this -> params);
+        
+        p($this -> params);
         p($this -> getQuery());
         $this -> resetQuery();
 
@@ -149,47 +206,8 @@ class db {
     }
 
     function concatQuery() {
-        
-        $str = '';
-        foreach($this -> query as $item) {
-
-            if(is_array($item)) {
-
-                $count = count($item);
-
-                if($count == 1)
-                    $str_item = $item[0];
-                else if($count > 1)
-                    $str_item = implode(', ', $item);
-                else 
-                    $str_item = '';
-
-            }                
-            else
-                $str_item = $item;
-            
-            $str .= ' ' . $str_item;
-
-        }
-
-        return $str;
-
-    }
-
-    function resetQuery() {
-        
-        $this -> one_row = false;
-
-        $this -> query = array(
-
-            'action' => 'SELECT',
-            'fields' => array(),
-            'table' => 'FROM ',
-            'where' => '',
-            'order_by' => '',
-            'limit' => '',
-    
-        );
+        p($this -> query);
+        return implode(" \n", $this -> query);
 
     }
 
