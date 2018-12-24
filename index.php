@@ -8,6 +8,22 @@ p(	$db -> select('name')
 		-> from('system_variable') 
 		-> first());
 		
+p(	$db -> select('id, name') 
+		-> select('value') 
+		-> from('system_variable') 
+		-> where('name', 'ნო 31')
+		-> where('id', '<', '50')
+		-> orderBy('name') 
+		-> orderBy('id', 2)
+		-> limit(2, 10)
+		-> get());
+
+pe(	$db -> table('system_variable') 
+		-> insert(array(
+			'value' => '53', 
+			'name' => '13'
+		)));
+
 pe(	$db -> select('id, name') 
 		-> select('value') 
 		-> from('system_variable') 

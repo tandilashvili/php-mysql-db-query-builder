@@ -28,7 +28,9 @@ class db {
 
             'action' => 'SELECT',
             'fields' => '',
-            'table' => 'FROM ',
+            'pre_table' => 'FROM',
+            'table' => '',
+            'set' => '',
             'where' => '',
             'order_by' => '',
             'limit' => '',
@@ -103,6 +105,30 @@ class db {
     function table($table) {
 
         return $this -> from($table);
+
+    }
+
+    function insert($params) {
+
+        $this -> query['action'] = 'INSERT';
+        $this -> query['pre_table'] = 'INTO';
+        foreach($params as $key => $value) {
+
+            $set = $key  . ' = :' . $key;
+            
+            // Add param to params array for prepared statement
+            $this -> params[$key] = $value;
+            
+            if(empty($this -> query['set']))
+                $this -> query['set'] = 'SET ' . $set;
+            else
+                $this -> query['set'] .= ', ' . $set;
+            
+        }
+
+        $result = $this -> query($this -> getQuery(), $this -> params);
+
+        return $this -> link -> lastInsertId();
 
     }
 
@@ -190,8 +216,6 @@ class db {
             $result = $this -> row($this -> getQuery(), $this -> params);
         else
             $result = $this -> rows($this -> getQuery(), $this -> params);
-        
-        p($this -> params);
         p($this -> getQuery());
         $this -> resetQuery();
 
@@ -206,7 +230,7 @@ class db {
     }
 
     function concatQuery() {
-        p($this -> query);
+        
         return implode(" \n", $this -> query);
 
     }
@@ -251,7 +275,8 @@ class db {
     public function query($query, $params = null)
     {
         
-        $stmt = null;
+        $stmt = $result = null;
+        
         try {
 
             if(!$this -> error) {
@@ -261,9 +286,9 @@ class db {
 
                 # execute query 
                 if($params)
-                    $stmt -> execute($params);
+                    $result = $stmt -> execute($params);
                 else
-                    $stmt -> execute();
+                    $result = $stmt -> execute();
 
             }            
 
