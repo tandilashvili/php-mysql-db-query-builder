@@ -100,7 +100,7 @@ class db {
     function aggregate($aggregate) {
 
         $query = $this -> select($aggregate) -> getQuery();
-        $this -> resetQuery();
+        
         return $this -> value($query);
 
     }
@@ -210,7 +210,7 @@ class db {
     }
 
     function get() {
-        
+        p($this -> getQuery());
         if(!count($this -> query['fields']))
             array_push($this -> query['fields'], '*');
         
@@ -218,9 +218,7 @@ class db {
             $result = $this -> row($this -> getQuery(), $this -> params);
         else
             $result = $this -> rows($this -> getQuery(), $this -> params);
-        p($this -> getQuery());
-        $this -> resetQuery();
-
+        
         return $result;
 
     }
@@ -276,7 +274,9 @@ class db {
 
     public function query($query, $params = null)
     {
-        
+
+        $this -> resetQuery();
+
         $stmt = $result = null;
         
         try {
