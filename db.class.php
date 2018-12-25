@@ -217,13 +217,19 @@ class db {
             $value = func_get_arg(2);
         }
 
+        return $this -> wherePart($key, $value, $comparison, ' AND ');
+
+    }
+
+    private function wherePart($key, $value, $comparison, $operator) {
+
         // Add param to params array for prepared statement
         $key_unique = $this -> getUniqueKey($key);
         $this -> params[$key_unique] = $value;
 
         $where =  $key . ' ' . $comparison . ' ' . ":$key_unique";
 
-        $this -> generateQueryPart('where', $where, 'WHERE', ' AND ');
+        $this -> generateQueryPart('where', $where, 'WHERE', $operator);
 
         return $this;
 
@@ -247,15 +253,7 @@ class db {
             $value = func_get_arg(2);
         }
 
-        // Add param to params array for prepared statement
-        $key_unique = $this -> getUniqueKey($key);
-        $this -> params[$key_unique] = $value;
-
-        $where =  $key . ' ' . $comparison . ' ' . ":$key_unique";
-
-        $this -> generateQueryPart('where', $where, 'WHERE', ' OR ');
-
-        return $this;
+        return $this -> wherePart($key, $value, $comparison, ' OR ');
 
     }
 
