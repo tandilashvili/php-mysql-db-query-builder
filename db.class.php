@@ -32,6 +32,7 @@ class db {
             'table' => '',
             'set' => '',
             'where' => '',
+            'join' => '',
             'order_by' => '',
             'limit' => '',
     
@@ -196,6 +197,14 @@ class db {
         $result = $this -> query($this -> getQuery(), $this -> params);
 
         return $result;
+
+    }
+
+    function join($table, $expr1, $expr2) {
+
+        $this -> query['join'] .= 'JOIN ' . $table . " ON $expr1 = $expr2 \n";
+
+        return $this;
 
     }
 

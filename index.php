@@ -6,22 +6,29 @@ p(	$db -> table('system_variable') -> sum('id'));
 
 p(	$db -> select('name') -> from('system_variable') -> first());
 		
-p(	$db -> select('id, name') 
-		-> select('value') 
-		-> from('system_variable')
-		-> where('id', '<', '50')
-		-> orderBy('name') 
-		-> orderBy('id', 2)
-		-> limit(5, 5)
-		-> get());
+// p(	$db -> select('id, name') 
+// 		-> select('value') 
+// 		-> from('system_variable')
+// 		-> where('id', '<', '50')
+// 		-> orderBy('name') 
+// 		-> orderBy('id', 2)
+// 		-> limit(5, 5)
+// 		-> get());
 
-p(	$db -> table('system_variable') 
-		-> insert(array('value' => '53', 'name' => '13'))
-	);
+// p(	$db -> table('system_variable') 
+// 		-> insert(array('value' => '53', 'name' => '13'))
+// 	);
 
 //p($db -> table('system_variable') -> where('id', '>', 119) -> delete());
 
 //pe($db -> table('system_variable') -> truncate());
+
+pe(	$db -> table('word') 
+		-> join('source', 'word.source_id', 'source.id')
+		-> select('word, sentence, word.comment, source.name') 
+		-> orderBy('word.id')
+		-> limit(10)
+		-> get());
 
 pe(	$db -> table('system_variable') 
 		-> where('name', '25')
