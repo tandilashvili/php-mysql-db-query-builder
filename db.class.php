@@ -68,6 +68,12 @@ class db {
 
     }
 
+    function exists() {
+
+        return $this -> count();
+
+    }
+
     function count() {
 
         return $this -> aggregate('COUNT(*)');
@@ -101,8 +107,8 @@ class db {
     function aggregate($aggregate) {
 
         $query = $this -> select($aggregate) -> getQuery();
-        
-        return $this -> value($query);
+
+        return $this -> value($query, $this -> params);
 
     }
 
@@ -203,6 +209,14 @@ class db {
     function join($table, $expr1, $expr2) {
 
         $this -> query['join'] .= 'JOIN ' . $table . " ON $expr1 = $expr2 \n";
+
+        return $this;
+
+    }
+
+    function leftJoin($table, $expr1, $expr2) {
+
+        $this -> query['join'] .= 'LEFT JOIN ' . $table . " ON $expr1 = $expr2 \n";
 
         return $this;
 
@@ -371,7 +385,7 @@ class db {
 
     public function query($query, $params = null)
     {
-
+        p([$query, $params]);
         $this -> resetQuery();
 
         $stmt = $result = null;

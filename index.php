@@ -2,7 +2,17 @@
 // Init libraries, classes
 include 'init.php';
 
+// p(	$db -> table('word') 
+// 		-> where('word', 'smoothly')
+// 		-> count());
+
+p(	$db -> table('system_variable') -> max('id'));
+
+p(	$db -> table('system_variable') -> where('id', '5') -> exists());
+
 p(	$db -> table('system_variable') -> sum('id'));
+
+p(	$db -> table('system_variable') -> min('id'));
 
 p(	$db -> select('name') -> from('system_variable') -> first());
 		
