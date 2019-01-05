@@ -36,6 +36,7 @@ class db {
             'set' => '',
             'where' => '',
             'join' => '',
+            'group_by' => '',
             'order_by' => '',
             'limit' => '',
     
@@ -176,7 +177,7 @@ class db {
 
     }
 
-    function getUniqueKey($key) {
+    private function getUniqueKey($key) {
 
         while(array_key_exists($key, $this -> params))
             $key .= '1';
@@ -280,6 +281,14 @@ class db {
         }
 
         return $this -> wherePart($key, $value, $comparison, ' OR ');
+
+    }
+
+    function groupBy($group_by) {
+
+        $this -> generateQueryPart('group_by', $group_by, 'GROUP BY');
+
+        return $this;
 
     }
 
@@ -396,7 +405,7 @@ class db {
 
     public function query($query, $params = null)
     {
-        
+        p($this -> getQuery());
         $this -> resetQuery();
 
         $stmt = $result = null;

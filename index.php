@@ -21,7 +21,7 @@ p(	$db -> table('system_variable') -> sum('id'));
 
 p(	$db -> table('system_variable') -> min('id'));
 
-p(	$db -> select('name') -> from('system_variable') -> first());
+p(	$db -> select('name') -> select('value, id') -> from('system_variable') -> first());
 		
 // p(	$db -> select('id, name') 
 // 		-> select('value') 
@@ -32,6 +32,7 @@ p(	$db -> select('name') -> from('system_variable') -> first());
 // 		-> limit(5, 5)
 // 		-> get());
 
+// Insert a new row into system_variable table
 p(	$db -> table('system_variable') 
 		-> insert([
 			'value' => '54', 
@@ -44,12 +45,11 @@ p(	$db -> table('system_variable')
 //pe($db -> table('system_variable') -> truncate());
 
 
-pe(	$db -> select('id, name') 
-		-> select('value') 
+pe(	$db -> select('value') 
+		-> select('COUNT(id) cnt')
 		-> from('system_variable') 
-		-> where('id', '<', '50')
-		-> orderBy('id', 2)
-		-> limit(2, 10)
+		-> where('id', '<', '90')
+		-> groupBy('value')
 		-> get()
 	);
 
