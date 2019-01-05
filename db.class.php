@@ -22,6 +22,8 @@ class db {
     function resetQuery() {
         
         $this -> one_row = false;
+        
+        $this -> one_field = false;
 
         $this -> params = array();
 

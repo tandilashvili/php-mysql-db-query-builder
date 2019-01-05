@@ -9,7 +9,7 @@ include 'init.php';
 // Get the highest id from the table
 p(	$db -> table('system_variable') -> max('id'));
 
-// Get the first field of the first row
+// Get a single field of the first row
 p(	$db -> table('system_variable') 
 		-> where('id', 32)
 		-> get('value')
@@ -43,12 +43,15 @@ p(	$db -> table('system_variable')
 
 //pe($db -> table('system_variable') -> truncate());
 
-pe(	$db -> table('word') 
-		-> join('source', 'word.source_id', 'source.id')
-		-> select('word, sentence, word.comment, source.name') 
-		-> orderBy('word.id')
-		-> limit(10)
-		-> get());
+
+pe(	$db -> select('id, name') 
+		-> select('value') 
+		-> from('system_variable') 
+		-> where('id', '<', '50')
+		-> orderBy('id', 2)
+		-> limit(2, 10)
+		-> get()
+	);
 
 pe(	$db -> table('system_variable') 
 		-> where('name', '25')
@@ -58,16 +61,12 @@ pe(	$db -> table('system_variable')
 			'name' => '27'
 		)));
 
-pe(	$db -> select('id, name') 
-		-> select('value') 
-		-> from('system_variable') 
-		-> where('name', 'ნო 31')
-		-> where('id', '<', '50')
-		-> orderBy('name') 
-		-> orderBy('id', 2)
-		-> limit(2, 10)
-		-> get()
-	);
+pe(	$db -> table('word') 
+		-> join('source', 'word.source_id', 'source.id')
+		-> select('word, sentence, word.comment, source.name') 
+		-> orderBy('word.id')
+		-> limit(10)
+		-> get());
 
 
 p($db -> value(GET_VARIABLE_VALUE, array('id' => 3)));
