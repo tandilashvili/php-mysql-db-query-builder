@@ -13,6 +13,7 @@ class db {
 
     // SQL Query Builder Variables
     var $one_row = false;
+    var $one_field = false;
     var $query = array();
     var $params = array();
 
@@ -320,12 +321,20 @@ class db {
 
     }
 
-    function get() {
-        p($this -> getQuery());
+    function get($field = '') {
+
+        if($field)
+        {
+            $this -> one_field = true;
+            $this -> select($field) -> limit(0, 1);
+        }
+        //p($this -> getQuery());
         if(empty($this -> query['fields']))
             array_push($this -> query['fields'], '*');
         
-        if($this -> one_row)
+        if($this -> one_field)
+            $result = $this -> value($this -> getQuery(), $this -> params);
+        else if($this -> one_row)
             $result = $this -> row($this -> getQuery(), $this -> params);
         else
             $result = $this -> rows($this -> getQuery(), $this -> params);
@@ -385,7 +394,7 @@ class db {
 
     public function query($query, $params = null)
     {
-        p([$query, $params]);
+        
         $this -> resetQuery();
 
         $stmt = $result = null;

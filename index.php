@@ -6,9 +6,16 @@ include 'init.php';
 // 		-> where('word', 'smoothly')
 // 		-> count());
 
+// Get the highest id from the table
 p(	$db -> table('system_variable') -> max('id'));
 
-p(	$db -> table('system_variable') -> where('id', '5') -> exists());
+// Get the first field of the first row
+p(	$db -> table('system_variable') 
+		-> where('id', 32)
+		-> get('value')
+);
+
+p(	$db -> table('system_variable') -> where('id', '>', '5') -> exists());
 
 p(	$db -> table('system_variable') -> sum('id'));
 
@@ -25,9 +32,12 @@ p(	$db -> select('name') -> from('system_variable') -> first());
 // 		-> limit(5, 5)
 // 		-> get());
 
-// p(	$db -> table('system_variable') 
-// 		-> insert(array('value' => '53', 'name' => '13'))
-// 	);
+p(	$db -> table('system_variable') 
+		-> insert([
+			'value' => '54', 
+			'name' => '14'
+		])
+);
 
 //p($db -> table('system_variable') -> where('id', '>', 119) -> delete());
 
