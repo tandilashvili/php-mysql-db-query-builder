@@ -341,7 +341,7 @@ class db {
         }
         //p($this -> getQuery());
         if(empty($this -> query['fields']))
-            array_push($this -> query['fields'], '*');
+            $this -> query['fields'] = '*';
         
         if($this -> one_field)
             $result = $this -> value($this -> getQuery(), $this -> params);
