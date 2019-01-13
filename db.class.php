@@ -34,8 +34,8 @@ class db {
             'pre_table' => 'FROM',
             'table' => '',
             'set' => '',
-            'where' => '',
             'join' => '',
+            'where' => '',
             'group_by' => '',
             'order_by' => '',
             'limit' => '',
@@ -167,8 +167,6 @@ class db {
             $this -> generateQueryPart('set', $set, 'SET');
             
         }
-
-        p($this -> getQuery());
         
         //pe($this -> params);
         $result = $this -> query($this -> getQuery(), $this -> params);
@@ -179,6 +177,7 @@ class db {
 
     private function getUniqueKey($key) {
 
+        $key = str_replace('.', '__', $key);
         while(array_key_exists($key, $this -> params))
             $key .= '1';
 
@@ -339,7 +338,7 @@ class db {
             $this -> one_field = true;
             $this -> select($field) -> limit(0, 1);
         }
-        //p($this -> getQuery());
+
         if(empty($this -> query['fields']))
             $this -> query['fields'] = '*';
         
@@ -405,7 +404,7 @@ class db {
 
     public function query($query, $params = null)
     {
-        p($this -> getQuery());
+        
         $this -> resetQuery();
 
         $stmt = $result = null;
