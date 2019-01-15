@@ -78,9 +78,12 @@ class db {
 
     }
 
-    function count() {
+    function count($field = '') {
 
-        return $this -> aggregate('COUNT(*)');
+        $f = '*';
+        if(!empty($field))
+            $f = $field;
+        return $this -> aggregate("COUNT($f)");
 
     }
 
@@ -168,7 +171,6 @@ class db {
             
         }
         
-        //pe($this -> params);
         $result = $this -> query($this -> getQuery(), $this -> params);
 
         return $result -> rowCount();
@@ -190,7 +192,6 @@ class db {
         $this -> query['action'] = 'DELETE';
         $this -> query['pre_table'] = 'FROM';
 
-        // pe($this -> getQuery());
         $result = $this -> query($this -> getQuery(), $this -> params);
 
         return $result -> rowCount();
@@ -202,7 +203,6 @@ class db {
         $this -> query['action'] = 'TRUNCATE';
         $this -> query['pre_table'] = 'TABLE';
 
-        // pe($this -> getQuery());
         $result = $this -> query($this -> getQuery(), $this -> params);
 
         return $result;
@@ -404,7 +404,7 @@ class db {
 
     public function query($query, $params = null)
     {
-        
+        //p($this -> getQuery());
         $this -> resetQuery();
 
         $stmt = $result = null;

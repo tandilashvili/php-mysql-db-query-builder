@@ -7,6 +7,10 @@ include 'init.php';
 // 		-> count());
 
 // Get the highest id from the table
+p(	$db -> table('system_variable')
+		-> count('DISTINCT value'));
+
+
 p(	$db -> table('system_variable') -> max('id'));
 
 // Get a single field of the first row
