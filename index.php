@@ -6,11 +6,20 @@ include 'init.php';
 // 		-> where('word', 'smoothly')
 // 		-> count());
 
-// Get the highest id from the table
+// 	
+p(	$db -> table('system_variable')
+		-> select('id, value, name')
+		-> where('id', '>', '20')
+		-> limit(7)
+		-> count());
+
+
+// get distinct value count
 p(	$db -> table('system_variable')
 		-> count('DISTINCT value'));
 
 
+// Get the highest id from the table
 p(	$db -> table('system_variable') -> max('id'));
 
 // Get a single field of the first row
@@ -52,7 +61,7 @@ p(	$db -> table('system_variable')
 pe(	$db -> select('value') 
 		-> select('COUNT(id) cnt')
 		-> from('system_variable') 
-		-> where('id', '<', '90')
+		-> where('id', '<', '190')
 		-> groupBy('value')
 		-> get()
 	);

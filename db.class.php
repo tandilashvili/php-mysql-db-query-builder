@@ -80,10 +80,32 @@ class db {
 
     function count($field = '') {
 
-        $f = '*';
-        if(!empty($field))
-            $f = $field;
-        return $this -> aggregate("COUNT($f)");
+        if(!empty($this -> query['fields'])) {
+
+            $query = $this -> getQuery();
+            $params = $this -> params;
+
+            $this -> query['fields'] = '';
+            $this -> query['limit'] = '';
+            $this -> query['order_by'] = '';
+
+            $count = $this -> count();
+
+            $rows = $this -> rows($query, $params);
+
+            return ['rows'=>$rows, 'count'=>$count];
+
+        }
+        else
+        {
+            
+            $f = '*';
+
+            if(!empty($field))            
+                $f = $field;
+            return $this -> aggregate("COUNT($f)");
+
+        }
 
     }
 
