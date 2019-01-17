@@ -80,6 +80,17 @@ class db {
 
     function count($field = '') {
 
+        $f = '*';
+
+        if(!empty($field))            
+            $f = $field;
+    
+        return $this -> aggregate("COUNT($f)");
+
+    }
+
+    function rowsWithCount($field = '') {
+
         if(!empty($this -> query['fields'])) {
 
             $query = $this -> getQuery();
@@ -94,16 +105,6 @@ class db {
             $rows = $this -> rows($query, $params);
 
             return ['rows'=>$rows, 'count'=>$count];
-
-        }
-        else
-        {
-            
-            $f = '*';
-
-            if(!empty($field))            
-                $f = $field;
-            return $this -> aggregate("COUNT($f)");
 
         }
 

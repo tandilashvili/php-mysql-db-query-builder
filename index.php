@@ -10,8 +10,8 @@ include 'init.php';
 p(	$db -> table('system_variable')
 		-> select('id, value, name')
 		-> where('id', '>', '20')
-		-> limit(7)
-		-> count());
+		-> limit(7, 10)
+		-> rowsWithCount());
 
 
 // get distinct value count
