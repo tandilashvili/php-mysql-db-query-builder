@@ -251,12 +251,14 @@ class db {
     function where() {
 
         $comparison = '=';
-        $key = $value = '';
+        $SQL_wpp = $key = $value = '';
 
         // Get number of params
         $num_args = func_num_args();
 
-        if($num_args == 2) {
+        if ($num_args == 1)
+            $SQL_wpp = func_get_arg(0); // SQL Without prepared statements
+        else if($num_args == 2) {
             $key = func_get_arg(0);
             $value = func_get_arg(1);
         }
@@ -266,18 +268,26 @@ class db {
             $value = func_get_arg(2);
         }
 
-        return $this -> wherePart($key, $value, $comparison, ' AND ');
+        return $this -> wherePart($key, $value, $comparison, ' AND ', $SQL_wpp);
 
     }
 
-    private function wherePart($key, $value, $comparison, $operator) {
+    private function wherePart($key, $value, $comparison, $operator, $SQL_wpp = '') {
 
-        // Add param to params array for prepared statement
-        $key_unique = $this -> getUniqueKey($key);
-        $this -> params[$key_unique] = $value;
+        if (empty($key) && !empty($SQL_wpp)) {
 
-        $where =  $key . ' ' . $comparison . ' ' . ":$key_unique";
+            $where = $SQL_wpp;
 
+        } else {
+
+            // Add param to params array for prepared statement
+            $key_unique = $this -> getUniqueKey($key);
+            $this -> params[$key_unique] = $value;
+
+            $where =  $key . ' ' . $comparison . ' ' . ":$key_unique";
+
+        }
+        
         $this -> generateQueryPart('where', $where, 'WHERE', $operator);
 
         return $this;

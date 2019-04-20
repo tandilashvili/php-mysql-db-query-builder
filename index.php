@@ -2,6 +2,14 @@
 // Init libraries, classes
 include 'init.php';
 
+p(	$db -> table('word') 
+		-> where("word", 'smoothly')
+		-> where("word IN ('smoothly', 'bravely')")
+		-> where("id", '<', 55)
+		-> count());
+
+
+echo '__';
 // p(	$db -> table('word') 
 // 		-> where('word', 'smoothly')
 // 		-> count());
