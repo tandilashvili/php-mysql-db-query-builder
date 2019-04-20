@@ -4,6 +4,18 @@ include 'init.php';
 
 p(	$db -> table('word') 
 		-> where("word", 'smoothly')
+		// -> join('jointable jt', 'jt.id', 'word.jointable_id') // commented because there are not such tables to join
+		// -> rightJoin('blahtable bt', 'bt.id', 'word.blahtable_id')
+		-> where("word IN ('smoothly', 'bravely')")
+		-> where("id", '<', 55)
+		// -> leftJoin('lefttable lt', 'lt.id', 'word.lefttable_id')
+		-> count());
+
+
+echo '__';
+
+p(	$db -> table('word') 
+		-> where("word", 'smoothly')
 		-> where("word IN ('smoothly', 'bravely')")
 		-> where("id", '<', 55)
 		-> count());

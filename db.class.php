@@ -242,7 +242,19 @@ class db {
 
     function leftJoin($table, $expr1, $expr2) {
 
-        $this -> query['join'] .= 'LEFT JOIN ' . $table . " ON $expr1 = $expr2 \n";
+        return $this -> anyJoin($table, $expr1, $expr2, 'LEFT');
+
+    }
+
+    function rightJoin($table, $expr1, $expr2) {
+
+        return $this -> anyJoin($table, $expr1, $expr2, 'RIGHT');
+
+    }
+
+    private function anyJoin($table, $expr1, $expr2, $join_type) {
+
+        $this -> query['join'] .= $join_type . ' JOIN ' . $table . " ON $expr1 = $expr2 \n";
 
         return $this;
 
