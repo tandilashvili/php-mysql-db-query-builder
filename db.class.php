@@ -3,8 +3,8 @@
 class db {
 
     var $host   = ""; //database server
-	var $user     = ""; //database login name
-	var $pass     = ""; //database login password
+    var $user     = ""; //database login name
+    var $pass     = ""; //database login password
     var $database = ""; //database name
 
     var $error = false; //database status
@@ -84,6 +84,10 @@ class db {
 
         if(!empty($field))            
             $f = $field;
+
+        $this -> query['fields'] = '';
+        $this -> query['limit'] = '';
+        $this -> query['order_by'] = '';
     
         return $this -> aggregate("COUNT($f)");
 
@@ -95,10 +99,6 @@ class db {
 
             $query = $this -> getQuery();
             $params = $this -> params;
-
-            $this -> query['fields'] = '';
-            $this -> query['limit'] = '';
-            $this -> query['order_by'] = '';
 
             $count = $this -> count();
 
@@ -138,6 +138,9 @@ class db {
 
         $query = $this -> select($aggregate) -> getQuery();
 
+        if ($aggregate == 'COUNT(*)' && !empty($this -> query['group_by']))
+            $query = "SELECT COUNT(*) FROM (".$query.") t";
+        
         return $this -> value($query, $this -> params);
 
     }
@@ -413,8 +416,8 @@ class db {
     function __construct ($host, $user, $pass, $database) {
 
         $this -> host = $host;
-		$this -> user = $user;
-		$this -> pass = $pass;
+        $this -> user = $user;
+        $this -> pass = $pass;
         $this -> database = $database;
         
         $this -> connect();
