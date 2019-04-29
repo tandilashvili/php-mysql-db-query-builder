@@ -292,6 +292,18 @@ class db {
 
     }
 
+    function whereIn($field, $values){
+
+        return $this -> where("$field IN ($values)");
+
+    }
+
+    function whereNotIn($field, $values){
+
+        return $this -> where("$field NOT IN ($values)");
+
+    }
+
     private function wherePart($key, $value, $comparison, $operator, $SQL_wpp = '') {
 
         if (empty($key) && !empty($SQL_wpp)) {

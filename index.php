@@ -2,6 +2,20 @@
 // Init libraries, classes
 include 'init.php';
 
+// Using whereIn and whereNotIn functions
+p(	$db -> table('word')
+		-> where("word IN ('oneblah', 'onebluh')")
+		-> where("word", 'smoothly')
+		-> whereIn("word", "'blah', 'bluh'")
+		-> whereNotIn("word", "'smoothly', 'bravely'")
+		-> where("id", '<', 55)
+		-> leftJoin('lefttable lt', 'lt.id', 'word.lefttable_id')
+		-> count());
+
+
+echo '__';
+
+// Using where with only one parameter
 p(	$db -> table('word') 
 		-> where("word", 'smoothly')
 		// -> join('jointable jt', 'jt.id', 'word.jointable_id') // commented because there are not such tables to join
