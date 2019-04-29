@@ -389,9 +389,16 @@ class db {
 
     }
 
-    function first() {
+    function first($field = '') {
         
-        $this -> one_row = true;
+        if($field  &&  strpos($field, ',') === false)
+            $this -> one_field = true;
+        else
+            $this -> one_row = true;
+
+        if($field)
+            $this -> select($field);
+
         return $this -> limit(0, 1) -> get();
 
     }
@@ -399,11 +406,8 @@ class db {
     function get($field = '') {
 
         if($field)
-        {
-            $this -> one_field = true;
-            $this -> select($field) -> limit(0, 1);
-        }
-
+            $this -> select($field);
+        
         if(empty($this -> query['fields']))
             $this -> query['fields'] = '*';
         

@@ -2,6 +2,28 @@
 // Init libraries, classes
 include 'init.php';
 
+/*
+Using first('field1, field2, ...') with several fields will result in 
+returning one row with corresponding fields 
+*/
+p(	$db -> table('word')
+        // -> select('sentence, comment, id')
+        -> where('id', '>', 630)
+        -> orderBy('id')
+        // -> limit(1)
+        -> first('sentence, comment, id') );
+
+
+// Using first('field') function to retrieve only one value. 
+p(	$db -> table('word')
+        // -> select('sentence, comment, id')
+        -> where('id', '>', 630)
+        -> orderBy('id')
+        // -> limit(1)
+        -> first('sentence') );
+
+
+
 // Using whereIn and whereNotIn functions
 p(	$db -> table('word')
 		-> where("word IN ('oneblah', 'onebluh')")
