@@ -7,7 +7,8 @@ class db {
     var $pass     = ""; //database login password
     var $database = ""; //database name
 
-    var $error = false; //database status
+    public $error = false; //database status
+    public $error_details = [];
     var $status_code = 1; //database status code
     var $status_text = "OK"; //database status text
 
@@ -25,7 +26,7 @@ class db {
         
         $this -> one_field = false;
 
-        $this -> params = array();
+        $this -> params = [];
 
         $this -> query = array(
 
@@ -41,6 +42,10 @@ class db {
             'limit' => '',
     
         );
+
+        $this -> error = false;
+
+        $this -> error_details = [];
 
     }
 
@@ -559,6 +564,9 @@ class db {
             $file = $e -> getFile();
             $line = $e -> getLine();
             $trace = $e -> getTraceAsString();
+
+            $this -> error = true;
+            $this -> error_details = [$message, $code, $file, $line, $trace];
 
             $stmt1 -> execute(array($query, $params, $message, $code, $file, $line, $trace, $comment));
 
