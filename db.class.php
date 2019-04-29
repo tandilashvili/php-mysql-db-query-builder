@@ -210,7 +210,7 @@ class db {
 
     private function getUniqueKey($key) {
 
-        $key = str_replace('.', '__', $key);
+        $key = str_replace(['.', '(', ')'], ['__', '', ''], $key);
         while(array_key_exists($key, $this -> params))
             $key .= '1';
 
